@@ -1,0 +1,101 @@
+{
+  "_comment": "Build with `packer build vagabond_ol72.json`",
+  "variables": {
+    "aria_rpm": "aria2-1.26.0-1.el7.centos.x86_64.rpm",
+    "cpus": "1",
+    "custom_script": ".",
+    "disk_size": "163840",
+    "headless": "true",
+    "iso_path": "/Volumes/USBDrive/iso/OracleLinux",
+    "iso_checksum": "03e048f23d798c8e8e7935fab76245c2f1341378",
+    "iso_checksum_type": "sha1",
+    "iso_name": "OracleLinux-R7-U2-Server-x86_64-dvd.iso",
+    "iso_url": "http://mirrors.kernel.org/oracle/OL7/u2/x86_64/OracleLinux-R7-U2-Server-x86_64-dvd.iso",
+    "kickstart": "ks7.cfg",
+    "memory": "512",
+    "packer_base": "/Volumes/USBDrive/packer",
+    "puppet_version": "latest",
+    "shutdown_command": "echo 'vagrant'|sudo -S shutdown -P now",
+    "ssh_password": "vagrant",
+    "ssh_username": "vagrant",
+    "update": "true",
+    "version": "0.0.1",
+    "version_description": "Initial upload of ps-vagabond box",
+    "virtualbox_guest_os_type": "Oracle_64",
+    "vm_name": "ps-vagabond_ol72"
+  },
+  "builders": [{
+    "boot_command": [
+      "<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort}}/{{ user `kickstart` }}<enter>"
+    ],
+    "boot_wait": "10s",
+    "disk_size": "{{ user `disk_size` }}",
+    "guest_additions_path": "VBoxGuestAdditions_{{.Version}}.iso",
+    "guest_os_type": "{{ user `virtualbox_guest_os_type` }}",
+    "hard_drive_interface": "sata",
+    "headless": "{{ user `headless` }}",
+    "http_directory": "http",
+    "iso_checksum": "{{ user `iso_checksum` }}",
+    "iso_checksum_type": "{{ user `iso_checksum_type` }}",
+    "iso_urls": [
+      "{{ user `iso_path` }}/{{ user `iso_name` }}",
+      "{{ user `iso_url` }}"
+    ],
+    "output_directory": "{{ user `packer_base` }}/output",
+    "shutdown_command": "{{ user `shutdown_command` }}",
+    "ssh_password": "{{ user `ssh_password` }}",
+    "ssh_username": "{{ user `ssh_username` }}",
+    "ssh_wait_timeout": "10000s",
+    "type": "virtualbox-iso",
+    "vboxmanage": [
+      ["modifyvm", "{{.Name}}", "--memory", "{{ user `memory` }}"],
+      ["modifyvm", "{{.Name}}", "--cpus", "{{ user `cpus` }}"]
+    ],
+    "virtualbox_version_file": ".vbox_version",
+    "vm_name": "{{ user `vm_name` }}"
+  }],
+  "post-processors": [{
+    "type": "vagrant",
+    "keep_input_artifact": false,
+    "output": "{{ user `packer_base` }}/box/{{.Provider}}/{{user `vm_name`}}-{{user `version`}}.box",
+    "compression_level": 9
+  }, {
+    "type": "atlas",
+    "artifact": "jrbing/ps-vagabond",
+    "artifact_type": "vagrant.box",
+    "metadata": {
+      "description": "{{ user `version_description`}}",
+      "provider": "virtualbox",
+      "version": "{{ user `version` }}"
+    }
+  }],
+  "provisioners": [{
+    "destination": "/tmp/{{ user `aria_rpm` }}",
+    "direction": "upload",
+    "source": "build/{{ user `aria_rpm` }}",
+    "type": "file"
+  }, {
+    "environment_vars": [
+      "PUPPET_VERSION={{ user `puppet_version` }}",
+      "UPDATE={{ user `update` }}",
+      "SSH_USERNAME={{ user `ssh_username` }}",
+      "SSH_PASSWORD={{ user `ssh_password` }}",
+      "ARIA_RPM={{ user `aria_rpm` }}"
+    ],
+    "execute_command": "echo 'vagrant' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
+    "scripts": [
+      "scripts/fix-slow-dns.sh",
+      "scripts/kernel.sh",
+      "scripts/sshd.sh",
+      "scripts/epel.sh",
+      "scripts/update.sh",
+      "scripts/aria.sh",
+      "scripts/vagrant.sh",
+      "scripts/virtualbox.sh",
+      "scripts/puppet.sh",
+      "scripts/motd.sh",
+      "scripts/cleanup.sh"
+    ],
+    "type": "shell"
+  }]
+}
