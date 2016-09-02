@@ -19,8 +19,8 @@
     "ssh_password": "vagrant",
     "ssh_username": "vagrant",
     "update": "true",
-    "version": "0.0.1",
-    "version_description": "Initial upload of ps-vagabond box",
+    "version": "0.0.2",
+    "version_description": "Bugfix release of ps-vagabond box",
     "virtualbox_guest_os_type": "Oracle_64",
     "vm_name": "ps-vagabond_ol72"
   },
