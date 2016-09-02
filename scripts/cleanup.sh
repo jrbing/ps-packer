@@ -15,6 +15,7 @@ function echoinfo() {
 KEEP_LANGUAGE="en"
 
 function cleanup_udev_persistence() {
+  echoinfo "Cleaning up udev persistence"
   # Clean up network interface persistence
   if grep -q -i "release 6" /etc/redhat-release ; then
     rm -f /etc/udev/rules.d/70-persistent-net.rules
@@ -32,18 +33,17 @@ function cleanup_udev_persistence() {
 }
 
 function cleanup_network_adapters() {
-  # new-style network device naming for centos7
-  if grep -q -i "release 7" /etc/redhat-release ; then
-    # radio off & remove all interface configration
-    nmcli radio all off
-    /bin/systemctl stop NetworkManager.service
-    for ifcfg in `ls /etc/sysconfig/network-scripts/ifcfg-* |grep -v ifcfg-lo` ; do
-      rm -f $ifcfg
-    done
-    rm -rf /var/lib/NetworkManager/*
+echoinfo "Cleaning up network adapters"
+# radio off & remove all interface configration
+nmcli radio all off
+/bin/systemctl stop NetworkManager.service
+for ifcfg in $(ls /etc/sysconfig/network-scripts/ifcfg-* |grep -v ifcfg-lo) ; do
+  rm -f "$ifcfg"
+done
+rm -rf /var/lib/NetworkManager/*
 
-  echoinfo "Setup /etc/rc.d/rc.local"
-  cat <<_EOF_ | cat >> /etc/rc.d/rc.local
+echo "Setup /etc/rc.d/rc.local for OEL7"
+cat <<_EOF_ | cat >> /etc/rc.d/rc.local
 #VAGABOND-BEGIN
 LANG=C
 # delete all connection
@@ -57,13 +57,11 @@ gwdev=\`nmcli dev | grep ethernet | egrep -v 'unmanaged' | head -n 1 | awk '{pri
 if [ "\$gwdev" != "" ]; then
   nmcli c add type eth ifname \$gwdev con-name \$gwdev
 fi
-sed -i -e "/^#VAGABOND-BEGIN/,/^#VAGABOND-END/{s/^/# /}" /etc/rc.d/rc.local
+sed -i "/^#VAGABOND-BEGIN/,/^#VAGABOND-END/d" /etc/rc.d/rc.local
 chmod -x /etc/rc.d/rc.local
 #VAGABOND-END
 _EOF_
-  chmod +x /etc/rc.d/rc.local
-fi
-
+chmod +x /etc/rc.d/rc.local
 }
 
 function remove_unused_man_locales() {
@@ -86,6 +84,29 @@ function remove_guest_tools_build_package() {
   yum -y remove gcc cpp libmpc mpfr kernel-devel kernel-headers
   #libstdc++
 }
+
+# TODO: find and remove unnecessary packages
+#function remove_unnecessary_packages() {
+ #acl acpid amtu apmd aspell aspell-en at attr audit anacron atk authconfig autofs bc bind-libs
+ #bind-utils binutils bitstream-vera-fonts bluez-gnome bluez-libs bluez-utils bzip2 cairo ccid conman coolkey
+ #cpp cpuspeed crash cryptsetup-luks cups-libs cyrus-sasl cyrus-sasl-plain dbus dbus-glib dbus-libs dbus-python
+ #desktop-file-utils dhclient dhcpv6-client dmidecode dnsmasq dos2unix dosfstools dump ecryptfs-utils ed eject
+ #fbset file finger firstboot-tui flex fontconfig freetype ftp gamin gamin-python gcc gcc-c++ GConf2 gettext
+ #glibc-devel glibc-headers gnu-efi gnutls gpm groff gtk2 hal hesiod hdparm hicolor-icon-theme htmlview ibmasm
+ #ifd-egate ipsec-tools iptables-ipv6 iptraf iptstate irda-utils irqbalance jwhois kernel-PAE-devel kernel-devel
+ #kernel-headers keyutils krb5-workstation ksh kudzu lftp libaio libdaemon libevent libgcrypt libgomp libgpg-error
+ #libgssapi libhugetlbfs libICE libIDL libjpeg libnotify libpng libSM libstdc++-devel libtiff libvolume_id libwnck
+ #libX11 libXau libXcursor libXdmcp libXext libXfixes libXft libXi libXinerama libxml2-python libXrandr libXrender
+ #libXres logwatch lsof m4 mailcap mailx make man man-pages mdadm mgetty microcode_ctl mkbootdisk mlocate mtools
+ #mtr nano nc NetworkManager NetworkManager-glib newt nfs-utils nfs-utils-lib notification-daemon nscd nss_db
+ #nss_ldap nss-tools ntsysv numactl ORBit2 oddjob oddjob-libs pam_ccreds pam_krb5 pam_passwdqc pam_pkcs11 pam_smb
+ #pango parted patch pax pcmciautils pcsc-lite pcsc-lite-libs perl perl-String-CRC32 pinfo pkinit-nss pm-utils
+ #portmap ppp prelink procmail psacct pygobject2 quota rdate rdist readahead redhat-lsb redhat-menus rhpl rmt
+ #rng-utils rp-pppoe rsh rsync screen sendmail setarch setools setserial setuptool slang smartmontools sos specspo
+ #startup-notification stunnel sudo sysfsutils syslinux system-config-network-tui system-config-securitylevel-tui
+ #talk tcl tcpdump tcsh telnet time tmpwatch traceroute tree trousers unix2dos unzip udftools usbutils vconfig
+ #vim-enhanced wget wireless-tools words wpa_supplicant xorg-x11-filesystem ypbind yp-tools yum-updatesd zip
+#}
 
 function clean_yum_cache() {
   echoinfo "Cleaning up yum cache"
@@ -122,7 +143,7 @@ function clear_and_disable_swap() {
   if [ "x${swapuuid}" != "x" ]; then
     # Whiteout the swap partition to reduce box size
     # Swap is disabled till reboot
-    swappart=$(readlink -f /dev/disk/by-uuid/$swapuuid)
+    swappart=$(readlink -f /dev/disk/by-uuid/"$swapuuid")
     /sbin/swapoff "${swappart}"
     dd if=/dev/zero of="${swappart}" bs=1M || echo "dd exit code $? is suppressed"
     /sbin/mkswap -U "${swapuuid}" "${swappart}"
@@ -142,7 +163,7 @@ function zero_empty_space() {
 
 function print_disk_savings() {
   echoinfo "Disk usage before cleanup"
-  echo ${DISK_USAGE_BEFORE_CLEANUP}
+  echo "${DISK_USAGE_BEFORE_CLEANUP}"
 
   echoinfo "Disk usage after cleanup"
   df -h
