@@ -6,6 +6,7 @@
 SSHD_CONFIG="/etc/ssh/sshd_config"
 
 # ensure that there is a trailing newline before attempting to concatenate
+# shellcheck disable=1003
 sed -i -e '$a\' "$SSHD_CONFIG"
 
 function echoinfo() {
@@ -16,7 +17,7 @@ function echoinfo() {
 
 function disable_ssh_dns_lookup() {
   echoinfo "Turning off sshd DNS lookup to prevent timeout delay"
-  USEDNS="UseDNS no"
+  local USEDNS="UseDNS no"
   if grep -q -E "^[[:space:]]*UseDNS" "$SSHD_CONFIG"; then
     sed -i "s/^\s*UseDNS.*/${USEDNS}/" "$SSHD_CONFIG"
   else
@@ -26,7 +27,7 @@ function disable_ssh_dns_lookup() {
 
 function disable_gssapi_auth() {
   echoinfo "Disablng GSSAPI authentication to prevent timeout delay"
-  GSSAPI="GSSAPIAuthentication no"
+  local GSSAPI="GSSAPIAuthentication no"
   if grep -q -E "^[[:space:]]*GSSAPIAuthentication" "$SSHD_CONFIG"; then
     sed -i "s/^\s*GSSAPIAuthentication.*/${GSSAPI}/" "$SSHD_CONFIG"
   else
@@ -34,5 +35,16 @@ function disable_gssapi_auth() {
   fi
 }
 
+function disable_root_login() {
+  echoinfo "Disabling root login"
+  local PermitRootLogin="PermitRootLogin no"
+  if grep -q -E "^.PermitRootLogin" "$SSHD_CONFIG"; then
+    sed -i -e "s/#PermitRootLogin.*/${PermitRootLogin}/" "$SSHD_CONFIG"
+  else
+    echo "$PermitRootLogin" >>"$SSHD_CONFIG"
+  fi
+}
+
 disable_ssh_dns_lookup
 disable_gssapi_auth
+disable_root_login
