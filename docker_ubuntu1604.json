@@ -1,0 +1,98 @@
+{
+  "_comment": "Build with `packer build docker_ubuntu1604.json`",
+  "variables": {
+    "boot_command_prefix": "<enter><wait><f6><esc><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+    "cpus": "2",
+    "desktop": "false",
+    "disk_size": "65536",
+    "headless": "true",
+    "install_vagrant_key": "true",
+    "iso_checksum": "de5ee8665048f009577763efbf4a6f0558833e59",
+    "iso_checksum_type": "sha1",
+    "iso_name": "ubuntu-16.04.1-server-amd64.iso",
+    "iso_url": "http://releases.ubuntu.com/16.04/ubuntu-16.04.1-server-amd64.iso",
+    "locale": "en_US",
+    "memory": "4096",
+    "packer_base": "{{env `PACKER_BASE`}}",
+    "preseed": "preseed.cfg",
+    "hostname": "vagrant",
+    "ssh_fullname": "vagrant",
+    "ssh_password": "vagrant",
+    "ssh_username": "vagrant",
+    "vagrantfile_template": "",
+    "version": "0.0.1",
+    "virtualbox_guest_os_type": "Ubuntu_64",
+    "vm_name": "docker_ubuntu1604",
+    "vmware_guest_os_type": "ubuntu-64"
+  },
+  "builders": [{
+    "boot_command": [
+      "{{ user `boot_command_prefix` }}",
+      "/install/vmlinuz noapic ",
+      "initrd=/install/initrd.gz ",
+      "file=/floppy/{{ user `preseed` }} ",
+      "debian-installer=en_US auto locale=en_US kbd-chooser/method=us ",
+      "hostname={{ user `hostname` }} ",
+      "grub-installer/bootdev=/dev/sda<wait> ",
+      "fb=false debconf/frontend=noninteractive ",
+      "keyboard-configuration/modelcode=SKIP keyboard-configuration/layout=USA ",
+      "keyboard-configuration/variant=USA console-setup/ask_detect=false ",
+      "passwd/user-fullname={{ user `ssh_fullname` }} ",
+      "passwd/user-password={{ user `ssh_password` }} ",
+      "passwd/user-password-again={{ user `ssh_password` }} ",
+      "passwd/username={{ user `ssh_username` }} ",
+      "-- <enter>"
+    ],
+    "disk_size": "{{ user `disk_size` }}",
+    "floppy_files": [
+      "http/{{ user `preseed` }}"
+    ],
+    "guest_additions_path": "VBoxGuestAdditions_{{.Version}}.iso",
+    "guest_os_type": "{{ user `virtualbox_guest_os_type` }}",
+    "hard_drive_interface": "sata",
+    "headless": "{{ user `headless` }}",
+    "iso_checksum": "{{ user `iso_checksum` }}",
+    "iso_checksum_type": "{{ user `iso_checksum_type` }}",
+    "iso_urls": [
+      "{{ user `packer_base` }}/iso/{{ user `iso_name` }}",
+      "{{ user `iso_url` }}"
+    ],
+    "output_directory": "{{ user `packer_base` }}/output",
+    "shutdown_command": "echo '{{ user `ssh_password` }}'|sudo -S shutdown -P now",
+    "ssh_password": "{{ user `ssh_password` }}",
+    "ssh_username": "{{ user `ssh_username` }}",
+    "ssh_wait_timeout": "10000s",
+    "type": "virtualbox-iso",
+    "vboxmanage": [
+      ["modifyvm", "{{.Name}}", "--memory", "{{ user `memory` }}"],
+      ["modifyvm", "{{.Name}}", "--cpus", "{{ user `cpus` }}"],
+      ["createhd", "--format", "VMDK", "--filename", "{{ user `packer_base` }}/disk/disk2.vmdk", "--variant", "STREAM", "--size", "10240"],
+      ["storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "1", "--type", "hdd", "--medium", "{{ user `packer_base` }}/disk/disk2.vmdk"]
+    ],
+    "virtualbox_version_file": ".vbox_version",
+    "vm_name": "{{user `vm_name`}}"
+  }],
+  "post-processors": [{
+    "keep_input_artifact": false,
+    "output": "{{ user `packer_base` }}/box/{{user `vm_name`}}.box",
+    "type": "vagrant",
+    "vagrantfile_template": "{{ user `vagrantfile_template` }}"
+  }],
+  "provisioners": [{
+    "environment_vars": [
+      "SSH_USERNAME={{user `ssh_username`}}",
+      "SSH_PASSWORD={{user `ssh_password`}}"
+    ],
+    "execute_command": "echo '{{ user `ssh_password` }}' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
+    "scripts": [
+      "scripts/ubuntu/sshd.sh",
+      "scripts/ubuntu/update.sh",
+      "scripts/ubuntu/vagrant.sh",
+      "scripts/ubuntu/virtualbox.sh",
+      "scripts/ubuntu/motd.sh",
+      "scripts/ubuntu/docker.sh",
+      "scripts/ubuntu/cleanup.sh"
+    ],
+    "type": "shell"
+  }]
+}
