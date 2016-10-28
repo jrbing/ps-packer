@@ -47,4 +47,4 @@ function disable_root_login() {
 
 disable_ssh_dns_lookup
 disable_gssapi_auth
-disable_root_login
+#disable_root_login

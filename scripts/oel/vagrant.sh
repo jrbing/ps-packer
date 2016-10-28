@@ -18,7 +18,7 @@ function add_vagrant_user() {
   echoinfo 'Adding vagrant user'
   # Add vagrant user (if it doesn't already exist)
   if ! id -u "$SSH_USERNAME" >/dev/null 2>&1; then
-    echoinfo '==> Creating Vagrant user'
+    echoinfo 'Creating Vagrant user'
     /usr/sbin/groupadd "$SSH_USERNAME"
     /usr/sbin/useradd "$SSH_USERNAME" -g "$SSH_USERNAME" -G wheel
     echo "${SSH_USERNAME}" | passwd --stdin "$SSH_USERNAME"
