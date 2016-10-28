@@ -3,24 +3,22 @@
   "variables": {
     "aria_rpm": "aria2-1.26.0-1.el7.centos.x86_64.rpm",
     "cpus": "1",
-    "custom_script": ".",
     "disk_size": "163840",
     "headless": "true",
-    "iso_path": "/Volumes/USBDrive/iso/OracleLinux",
+    "iso_path": "{{env `PACKER_BASE`}}/iso",
     "iso_checksum": "03e048f23d798c8e8e7935fab76245c2f1341378",
     "iso_checksum_type": "sha1",
     "iso_name": "OracleLinux-R7-U2-Server-x86_64-dvd.iso",
     "iso_url": "http://mirrors.kernel.org/oracle/OL7/u2/x86_64/OracleLinux-R7-U2-Server-x86_64-dvd.iso",
     "kickstart": "ks7.cfg",
     "memory": "512",
-    "packer_base": "/Volumes/USBDrive/packer",
+    "packer_base": "{{env `PACKER_BASE`}}",
     "puppet_version": "latest",
     "shutdown_command": "echo 'vagrant'|sudo -S shutdown -P now",
     "ssh_password": "vagrant",
     "ssh_username": "vagrant",
-    "update": "true",
-    "version": "0.0.3",
-    "version_description": "Bugfix release of ps-vagabond box",
+    "version": "0.0.4",
+    "version_description": "Update to vbox guest additions",
     "virtualbox_guest_os_type": "Oracle_64",
     "vm_name": "ps-vagabond_ol72"
   },
@@ -57,7 +55,7 @@
   "post-processors": [{
     "type": "vagrant",
     "keep_input_artifact": false,
-    "output": "{{ user `packer_base` }}/box/{{.Provider}}/{{user `vm_name`}}-{{user `version`}}.box",
+    "output": "{{ user `packer_base` }}/box/{{.Provider}}/{{user `vm_name`}}.box",
     "compression_level": 9
   }, {
     "type": "atlas",
@@ -77,24 +75,23 @@
   }, {
     "environment_vars": [
       "PUPPET_VERSION={{ user `puppet_version` }}",
-      "UPDATE={{ user `update` }}",
       "SSH_USERNAME={{ user `ssh_username` }}",
       "SSH_PASSWORD={{ user `ssh_password` }}",
       "ARIA_RPM={{ user `aria_rpm` }}"
     ],
     "execute_command": "echo 'vagrant' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
     "scripts": [
-      "scripts/fix-slow-dns.sh",
-      "scripts/kernel.sh",
-      "scripts/sshd.sh",
-      "scripts/epel.sh",
-      "scripts/update.sh",
-      "scripts/aria.sh",
-      "scripts/vagrant.sh",
-      "scripts/virtualbox.sh",
-      "scripts/puppet.sh",
-      "scripts/motd.sh",
-      "scripts/cleanup.sh"
+      "scripts/oel/fix-slow-dns.sh",
+      "scripts/oel/kernel.sh",
+      "scripts/oel/sshd.sh",
+      "scripts/oel/epel.sh",
+      "scripts/oel/update.sh",
+      "scripts/oel/aria.sh",
+      "scripts/oel/vagrant.sh",
+      "scripts/oel/virtualbox.sh",
+      "scripts/oel/puppet.sh",
+      "scripts/oel/motd.sh",
+      "scripts/oel/cleanup.sh"
     ],
     "type": "shell"
   }]
