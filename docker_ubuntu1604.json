@@ -21,6 +21,7 @@
     "ssh_username": "vagrant",
     "vagrantfile_template": "",
     "version": "0.0.1",
+    "version_description": "Initial upload",
     "virtualbox_guest_os_type": "Ubuntu_64",
     "vm_name": "docker_ubuntu1604",
     "vmware_guest_os_type": "ubuntu-64"
@@ -77,6 +78,15 @@
     "output": "{{ user `packer_base` }}/box/{{user `vm_name`}}.box",
     "type": "vagrant",
     "vagrantfile_template": "{{ user `vagrantfile_template` }}"
+  }, {
+    "type": "atlas",
+    "artifact": "jrbing/docker_ubuntu1604",
+    "artifact_type": "vagrant.box",
+    "metadata": {
+      "description": "{{ user `version_description`}}",
+      "provider": "virtualbox",
+      "version": "{{ user `version` }}"
+    }
   }],
   "provisioners": [{
     "environment_vars": [
