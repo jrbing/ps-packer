@@ -104,6 +104,7 @@
     ],
     "name": "virtualbox",
     "output_directory": "{{ user `packer_base` }}/output/virtualbox",
+    "post_shutdown_delay": "30s",
     "shutdown_command": "echo '{{ user `ssh_password` }}'|sudo -S shutdown -P now",
     "ssh_password": "{{ user `ssh_password` }}",
     "ssh_username": "{{ user `ssh_username` }}",
