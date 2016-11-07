@@ -24,4 +24,7 @@ function install_virtualbox_guest_additions() {
   rm -f /home/vagrant/.vbox_version
 }
 
-install_virtualbox_guest_additions
+if [[ $PACKER_BUILDER_TYPE =~ virtualbox ]]; then
+  install_virtualbox_guest_additions
+fi
+
