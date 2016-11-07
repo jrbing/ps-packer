@@ -75,6 +75,14 @@ function add_vagrant_user_to_docker_group() {
   usermod -aG docker vagrant
 }
 
+function install_portainer_service() {
+  echoinfo "Installing portainer service"
+  cp /home/vagrant/portainer.service /etc/systemd/system/portainer.service
+  systemctl daemon-reload
+  systemctl enable portainer
+  systemctl start portainer
+}
+
 install_zfs
 create_zpool
 mount_zpool
@@ -85,3 +93,4 @@ clean_docker_lib
 update_docker_storage_driver
 restart_docker_service
 add_vagrant_user_to_docker_group
+install_portainer_service
