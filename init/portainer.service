@@ -1,0 +1,13 @@
+[Unit]
+Description=Portainer
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/docker run -d -p 9000:9000 -v /var/run/docker.sock:/var/run/docker.sock --name portainer portainer/portainer
+ExecStop=/usr/bin/docker stop -t 2 portainer
+ExecStopPost=/usr/bin/docker rm -f portainer
+
+[Install]
+WantedBy=default.target
