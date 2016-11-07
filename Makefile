@@ -14,9 +14,11 @@ MAKEFLAGS += --warn-undefined-variables -j 8
 SHELL := /bin/bash
 .SHELLFLAGS := -eu -o pipefail
 
+#export PATH := $(GOPATH)/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin
+
 packer_templates = docker_ubuntu1604.json
 #packer_templates = $(wildcard *.json)
-packer_base = /Volumes/FLASH_DRIVE/packer
+packer_base = $(PACKER_BASE)
 vagrant_boxes = $(packer_base)/box/*/*.box
 
 # setup: create the necessary directories and install vagrant plugins
