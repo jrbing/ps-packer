@@ -48,6 +48,11 @@ function install_docker() {
   apt-get install --allow-unauthenticated -y docker-engine
 }
 
+function install_systemd_docker() {
+  echoinfo "Installing docker wrapper for systemd"
+  apt-get install -y systemd-docker
+}
+
 function shutdown_docker() {
   echoinfo "Stopping docker service"
   systemctl stop docker
@@ -80,7 +85,6 @@ function install_portainer_service() {
   cp /home/vagrant/portainer.service /etc/systemd/system/portainer.service
   systemctl daemon-reload
   systemctl enable portainer
-  systemctl start portainer
 }
 
 install_zfs
@@ -88,6 +92,7 @@ create_zpool
 mount_zpool
 install_docker_prerequisites
 install_docker
+install_systemd_docker
 shutdown_docker
 clean_docker_lib
 update_docker_storage_driver
