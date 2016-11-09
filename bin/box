@@ -92,9 +92,6 @@ function load_ssh_destroy() {
 
 function main() {
   case $1 in
-    push)
-      echoinfo "Pushing to atlas"
-      ;;
     test)
       echoinfo "Running spec tests"
       ;;
