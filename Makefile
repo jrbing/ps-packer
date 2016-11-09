@@ -1,8 +1,6 @@
 #===============================================================================
 # vim: softtabstop=2 shiftwidth=2 noexpandtab fenc=utf-8 spelllang=en nolist
 #===============================================================================
-# Cheat Sheet - http://www.cheatography.com/bavo-van-achte/cheat-sheets/gnumake/
-# Refcard - http://www.schacherer.de/frank/technology/tools/make.html
 
 # Automatic Variables
 # -------------------
@@ -14,13 +12,12 @@ MAKEFLAGS += --warn-undefined-variables -j 8
 SHELL := /bin/bash
 .SHELLFLAGS := -eu -o pipefail
 
-#export PATH := $(GOPATH)/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin
-
 packer_templates = docker_ubuntu1604.json
 #packer_templates = $(wildcard *.json)
 packer_base = $(PACKER_BASE)
 vagrant_boxes = $(packer_base)/box/*/*.box
 
+# TODO...
 # setup: create the necessary directories and install vagrant plugins
 # load: import generated boxes into vagrant
 # test: run serverspec tests
@@ -28,18 +25,6 @@ vagrant_boxes = $(packer_base)/box/*/*.box
 # push: push generated boxes to atlas
 # clean: clean up build detritus
 # ssh: ubuntu1604 virtualbox
-
-#deliver:
-	#@for box_name in $(BOX_NAMES) ; do \
-		#echo Uploading $$box_name to Atlas ; \
-		#bin/register_atlas.sh $$box_name $(BOX_SUFFIX) $(BOX_VERSION) ; \
-	#done
-
-#load: $(vagrant_boxes)
-	#@$(patsubst %,echo %;,$^)
-
-#load: $(vagrant_boxes)
-	#echo $(patsubst %,%;,$^)
 
 all: build 
 
@@ -54,5 +39,6 @@ load: $(vagrant_boxes)
 
 clean:
 	rm -fv $(packer_base)/box/**/*.box
+	rm -rfv $(packer_base)/output/*
 
 PHONY: build clean load setup
