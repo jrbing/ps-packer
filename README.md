@@ -15,11 +15,9 @@ Simply run `packer build vagabond_ol72.json` from the current directory.
 ## TODO ##
 
 * Add additional builders
-    * Azure
     * VMWare
     * QEMU
 * Add tests (using http://kitchen.ci/)
-* Add Vagrantfile templates
 
 [packer]:https://www.packer.io "http://www.packer.io"
 [virtualbox]:https://www.virtualbox.org "http://www.virtualbox.org"
