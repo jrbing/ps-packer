@@ -16,4 +16,16 @@ function install_aria() {
   rpm -Uvh "$ARIA_PATH"
 }
 
-install_aria
+function install_extras_repo() {
+  echoinfo "Installing jrbing/ps-extras repository from packagecloud"
+  curl -s https://packagecloud.io/install/repositories/jrbing/ps-extras/script.rpm.sh | bash
+}
+
+function install_aria_from_repo() {
+  echoinfo "Installing aria2 from repository"
+  yum install -y aria2
+}
+
+#install_aria
+install_extras_repo
+install_aria_from_repo
