@@ -10,13 +10,9 @@ function echoinfo() {
 }
 
 function use_redhat_kernel() {
-  echoinfo "Configuring Grub to use RedHat-compatible kernel"
-  if grep -q -i "release 7" /etc/redhat-release ; then
-    sed -i 's/^GRUB_DEFAULT=saved/GRUB_DEFAULT=0/' /etc/default/grub
-    grub2-mkconfig -o /boot/grub2/grub.cfg
-  else
-    sed -i 's/^default=0/default=1/' /boot/grub/grub.conf
-  fi
+  echoinfo "Disabling transparent hugepages"
+  sed -i 's/^GRUB_DEFAULT=saved/GRUB_DEFAULT=1/' /etc/default/grub
+  grub2-mkconfig -o /boot/grub2/grub.cfg
 }
 
 function disable_transparent_hugepages() {
