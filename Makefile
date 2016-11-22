@@ -12,13 +12,12 @@ MAKEFLAGS += --warn-undefined-variables -j 8
 SHELL := /bin/bash
 .SHELLFLAGS := -eu -o pipefail
 
-packer_templates = docker_ubuntu1604.json
-#packer_templates = $(wildcard *.json)
+#packer_templates = docker_ubuntu1604.json
+packer_templates = $(wildcard *.json)
 packer_base = $(PACKER_BASE)
 vagrant_boxes = $(packer_base)/box/*/*.box
 
 # TODO...
-# setup: create the necessary directories and install vagrant plugins
 # load: import generated boxes into vagrant
 # test: run serverspec tests
 # assure: run tests against all the boxes
