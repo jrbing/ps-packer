@@ -4,7 +4,7 @@
   "variables": {
     "cpus": "1",
     "disk_size": "163840",
-    "headless": "true",
+    "headless": "false",
     "iso_checksum": "130ee6cda827aa092b6eb66a145420f9801aa321",
     "iso_checksum_type": "sha1",
     "iso_name": "OracleLinux-R7-U3-Server-x86_64-dvd.iso",
@@ -75,7 +75,6 @@
     ],
     "execute_command": "echo 'vagrant' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
     "scripts": [
-      "scripts/oel/fix-slow-dns.sh",
       "scripts/oel/kernel.sh",
       "scripts/oel/sshd.sh",
       "scripts/oel/epel.sh",
