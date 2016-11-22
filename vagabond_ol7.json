@@ -1,15 +1,15 @@
 {
-  "_comment": "Build with `packer build vagabond_ol72.json`",
+  "description": "Packer template for ps-vagabond base box",
+  "_comment": "Build with `packer build vagabond_ol7.json`",
   "variables": {
-    "aria_rpm": "aria2-1.26.0-1.el7.centos.x86_64.rpm",
     "cpus": "1",
     "disk_size": "163840",
     "headless": "true",
-    "iso_path": "{{env `PACKER_BASE`}}/iso",
-    "iso_checksum": "03e048f23d798c8e8e7935fab76245c2f1341378",
+    "iso_checksum": "130ee6cda827aa092b6eb66a145420f9801aa321",
     "iso_checksum_type": "sha1",
-    "iso_name": "OracleLinux-R7-U2-Server-x86_64-dvd.iso",
-    "iso_url": "http://mirrors.kernel.org/oracle/OL7/u2/x86_64/OracleLinux-R7-U2-Server-x86_64-dvd.iso",
+    "iso_name": "OracleLinux-R7-U3-Server-x86_64-dvd.iso",
+    "iso_path": "{{env `PACKER_BASE`}}/iso",
+    "iso_url": "http://mirrors.kernel.org/oracle/OL7/u3/x86_64/OracleLinux-R7-U3-Server-x86_64-dvd.iso",
     "kickstart": "ks7.cfg",
     "memory": "512",
     "packer_base": "{{env `PACKER_BASE`}}",
@@ -17,10 +17,10 @@
     "shutdown_command": "echo 'vagrant'|sudo -S shutdown -P now",
     "ssh_password": "vagrant",
     "ssh_username": "vagrant",
-    "version": "0.0.4",
-    "version_description": "Update to vbox guest additions",
+    "version": "1.0.0",
+    "version_description": "Update vbox guest additions, upgrade to oel73",
     "virtualbox_guest_os_type": "Oracle_64",
-    "vm_name": "ps-vagabond_ol72"
+    "vm_name": "ps-vagabond_ol7"
   },
   "builders": [{
     "boot_command": [
@@ -68,16 +68,10 @@
     }
   }],
   "provisioners": [{
-    "destination": "/tmp/{{ user `aria_rpm` }}",
-    "direction": "upload",
-    "source": "build/{{ user `aria_rpm` }}",
-    "type": "file"
-  }, {
     "environment_vars": [
       "PUPPET_VERSION={{ user `puppet_version` }}",
       "SSH_USERNAME={{ user `ssh_username` }}",
-      "SSH_PASSWORD={{ user `ssh_password` }}",
-      "ARIA_RPM={{ user `aria_rpm` }}"
+      "SSH_PASSWORD={{ user `ssh_password` }}"
     ],
     "execute_command": "echo 'vagrant' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
     "scripts": [
