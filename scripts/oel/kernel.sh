@@ -11,7 +11,7 @@ function echoinfo() {
 
 function use_redhat_kernel() {
   echoinfo "Disabling transparent hugepages"
-  sed -i 's/^GRUB_DEFAULT=saved/GRUB_DEFAULT=1/' /etc/default/grub
+  sed -i 's/^GRUB_DEFAULT=saved/GRUB_DEFAULT=0/' /etc/default/grub
   grub2-mkconfig -o /boot/grub2/grub.cfg
 }
 
