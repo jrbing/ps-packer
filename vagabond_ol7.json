@@ -4,7 +4,7 @@
   "variables": {
     "cpus": "1",
     "disk_size": "163840",
-    "headless": "false",
+    "headless": "true",
     "iso_checksum": "130ee6cda827aa092b6eb66a145420f9801aa321",
     "iso_checksum_type": "sha1",
     "iso_name": "OracleLinux-R7-U3-Server-x86_64-dvd.iso",
@@ -17,8 +17,8 @@
     "shutdown_command": "echo 'vagrant'|sudo -S shutdown -P now",
     "ssh_password": "vagrant",
     "ssh_username": "vagrant",
-    "version": "1.0.0",
-    "version_description": "Update vbox guest additions, upgrade to oel73",
+    "version": "1.0.1",
+    "version_description": "Update vbox guest additions and packages",
     "virtualbox_guest_os_type": "Oracle_64",
     "vm_name": "ps-vagabond_ol7"
   },
