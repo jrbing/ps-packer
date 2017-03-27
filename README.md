@@ -22,4 +22,4 @@ Simply run `packer build vagabond_ol72.json` from the current directory.
 [packer]:https://www.packer.io "http://www.packer.io"
 [virtualbox]:https://www.virtualbox.org "http://www.virtualbox.org"
 [boxcutter]:https://github.com/boxcutter "https://github.com/boxcutter"
-[vagabond]:https://github.com/jrbing/ps-vagabond "https://github.com/jrbing/ps-vagabond".
+[vagabond]:https://github.com/jrbing/ps-vagabond "https://github.com/jrbing/ps-vagabond"
