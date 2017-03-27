@@ -1,7 +1,7 @@
 ps-packer
 =========
 
-Packer templates and provisioning scripts for building Vagrant boxes to be used with [ps-vagabond][ps-vagabond].  Largely based on work done by the [Boxcutter Project][boxcutter].
+Packer templates and provisioning scripts for building Vagrant boxes to be used with [ps-vagabond][vagabond].  Largely based on work done by the [Boxcutter Project][boxcutter].
 
 ## Prerequisities ##
 
@@ -14,12 +14,12 @@ Simply run `packer build vagabond_ol72.json` from the current directory.
 
 ## TODO ##
 
-* Add additional builders
+* Additional builders
     * VMWare
     * QEMU
-* Add tests (using http://kitchen.ci/)
+* Tests (using http://kitchen.ci/)
 
 [packer]:https://www.packer.io "http://www.packer.io"
 [virtualbox]:https://www.virtualbox.org "http://www.virtualbox.org"
 [boxcutter]:https://github.com/boxcutter "https://github.com/boxcutter"
-[ps-vagabond]:https://github.com/jrbing/ps-vagabond "https://github.com/jrbing/ps-vagabond".
+[vagabond]:https://github.com/jrbing/ps-vagabond "https://github.com/jrbing/ps-vagabond".
